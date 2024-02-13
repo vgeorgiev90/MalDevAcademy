@@ -5,8 +5,18 @@
 #include "structs.h"
 
 
+/*----------------------------------
+ Shellcode execution via fibers 
+ or if not defined NtCreateThreadEx
+ is used.
+----------------------------------*/
+#define FIBER_EXEC
 
-#define LOCAL_FILE "C:\\Users\\nullb1t3\\Desktop\\calc.bin"
+
+/*------------------------------
+  Shellcode file on disk
+------------------------------*/
+#define LOCAL_FILE "C:\\Users\\nullb1t3\\Desktop\\http.bin"
 
 
 /*------------------------
