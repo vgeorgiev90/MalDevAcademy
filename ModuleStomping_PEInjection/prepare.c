@@ -182,7 +182,7 @@ BOOL WriteExec(ULONG_PTR dllEntry, PCONTENT cnt) {
 		return FALSE;
 	}
 
-	DEBUG_PRINT("\t> Converting the main thread to fiber");
+	DEBUG_PRINT("\t> Converting the main thread to fiber\n");
 	PVOID pFiberAddr = ConvertThreadToFiber(NULL);
 	if (!pFiberAddr) {
 		DEBUG_PRINT("[!] Converting the main thread failed: %d\n", GetLastError());

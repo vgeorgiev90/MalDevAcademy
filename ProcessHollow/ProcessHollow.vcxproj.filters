@@ -18,27 +18,24 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mapDLL.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="crypt.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="generic.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="preparePE.c">
+    <ClCompile Include="spawn.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="prepare.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="structs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{94206668-ea8f-4e34-a8ec-96e4f8e24dcb}</ProjectGuid>
-    <RootNamespace>ModuleOverloading</RootNamespace>
+    <ProjectGuid>{1a5bf83f-2499-4b7d-8abb-40a47617a8a5}</ProjectGuid>
+    <RootNamespace>ProcessHollow</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -118,7 +118,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,12 +130,11 @@
     <ClCompile Include="crypt.c" />
     <ClCompile Include="generic.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="mapDLL.c" />
-    <ClCompile Include="preparePE.c" />
+    <ClCompile Include="prepare.c" />
+    <ClCompile Include="spawn.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="structs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
