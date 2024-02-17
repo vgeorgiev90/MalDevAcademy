@@ -15,8 +15,8 @@
 /*------------------------------
   Encrypted PE file on disk
 ------------------------------*/
-#define PE_FILE "C:\\Users\\nullb1t3\\Desktop\\mimikatz-enc.bin"
-#define PE_ARGS L"coffee exit"
+#define PE_FILE "C:\\Users\\lgreenleaf\\Desktop\\mimikatz-enc.bin"
+#define PE_ARGS L"coffee coffee exit"
 
 
 /*-----------------------

